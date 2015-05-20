@@ -11,7 +11,7 @@ Use this Spray directive that prerenders a javascript-rendered page using an ext
 
 1:add dependency on your 
 
-    "com.github.jarlakxen" %% "play-prerender" % "1.0"
+      "com.github.jarlakxen" % "play-prerender_2.10" % "1.1"
 
 2:Add this line to your code
 
