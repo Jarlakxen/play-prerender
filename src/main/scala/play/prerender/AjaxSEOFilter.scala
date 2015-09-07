@@ -48,10 +48,14 @@ class AjaxSEOFilter(config: PrerenderConfig) extends Filter {
       case _ => false
     }
   }
-  
+
   def currentURL(request: RequestHeader) =  "http" + (if (request.secure) "s" else "") + "://" + request.host + request.uri
 
-  def getFromPrerender(request: RequestHeader) = WS.url(config.prerenderUrlEndpoint + currentURL(request)).get().map(_.body)
+  def getFromPrerender(request: RequestHeader) = {
+    val req = WS.url(config.prerenderUrlEndpoint + currentURL(request))
+    config.token.foreach(token => req.withHeaders("X-Prerender-Token" -> token))
+    req.get().map(_.body)
+  }
 
   def getRequestURL(request: RequestHeader) = config.forwardedURLHeader.map(request.headers.get(_).get).getOrElse(request.path)
 
@@ -74,5 +78,5 @@ class AjaxSEOFilter(config: PrerenderConfig) extends Filter {
 
 object AjaxSEOFilter {
   def apply(config: PrerenderConfig) = new AjaxSEOFilter(config)
-  def apply(prerenderUrlEndpoint: String, socketTimeout: Long = 1000) = new AjaxSEOFilter(PrerenderConfig(prerenderUrlEndpoint, socketTimeout))
+  def apply(prerenderUrlEndpoint: String, token: Option[String] = None, socketTimeout: Long = 1000) = new AjaxSEOFilter(PrerenderConfig(prerenderUrlEndpoint, token, socketTimeout))
 }

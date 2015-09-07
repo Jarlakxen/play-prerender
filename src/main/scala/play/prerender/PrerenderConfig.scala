@@ -2,6 +2,7 @@ package play.prerender
 
 case class PrerenderConfig(
   prerenderUrlEndpoint: String,
+  token: Option[String] = None,
   socketTimeout: Long = 1000,
   forwardedURLHeader: Option[String] = None,
   crawlerUserAgents: Seq[String] = Seq("googlebot", "yahoo", "bingbot", "baiduspider",
