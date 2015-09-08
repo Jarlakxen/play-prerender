@@ -1,9 +1,4 @@
 import sbt.Keys._
-import SonatypeKeys._
-
-// ··· Settings ···
-
-sonatypeSettings
 
 // ··· Project Info ···
 
@@ -11,7 +6,7 @@ name := "play-prerender"
 
 organization := "com.github.jarlakxen"
 
-crossScalaVersions := Seq("2.10.4", "2.11.1")
+crossScalaVersions := Seq("2.11.7")
 
 scalaVersion <<= (crossScalaVersions) { versions => versions.head }
 
@@ -20,20 +15,6 @@ fork in run   := true
 publishMavenStyle := true
 
 publishArtifact in Test := false
-
-
-// ··· Project Enviroment ···
-
-EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
-
-EclipseKeys.projectFlavor := EclipseProjectFlavor.Scala
-
-EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE17)
-
-unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil
-
-unmanagedSourceDirectories in Test := (scalaSource in Test).value :: Nil
-
 
 // ··· Project Options ···
 
@@ -59,10 +40,9 @@ resolvers ++= Seq("OSS" at "http://oss.sonatype.org/content/repositories/release
 // ··· Project Dependancies···
 
 libraryDependencies ++= Seq(
-  "org.scala-lang"                %  "scala-reflect"      % "2.10.4",
   // --- Play ---
-  "com.typesafe.play"             %% "play"               % "2.3.0"   %  "provided",
-  "com.typesafe.play"             %% "play-ws"            % "2.3.0"   %  "provided"
+  "com.typesafe.play"             %% "play"               % "2.3.10"   %  "provided",
+  "com.typesafe.play"             %% "play-ws"            % "2.3.10"   %  "provided"
 )
 
 pomExtra := (
@@ -86,3 +66,11 @@ pomExtra := (
     </developer>
   </developers>
 )
+
+publishTo <<= version { v =>
+  val nexus = "https://oss.sonatype.org/"
+  if (v.endsWith("-SNAPSHOT"))
+  Some("sonatype-nexus-snapshots" at nexus + "content/repositories/snapshots/")
+  else
+  Some("sonatype-nexus-staging" at nexus + "service/local/staging/deploy/maven2/")
+}
